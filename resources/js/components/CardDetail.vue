@@ -1,15 +1,30 @@
 <template>
-    <div class="modal-overlay" @click.self="$emit('close')">
-        <div class="modal">
-            <button class="modal__close" @click="$emit('close')">✕</button>
-
+    <Teleport to="body">
+        <div class="panel-overlay" @click.self="$emit('close')"></div>
+        <div class="panel">
             <div
-                v-if="localCoverColor"
-                class="modal__cover"
-                :style="{ background: localCoverColor }"
-            ></div>
+                class="panel__header"
+                :style="localCoverColor ? { background: localCoverColor } : {}"
+            >
+                <button class="panel__close" @click="$emit('close')">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+            </div>
 
-            <div class="modal__inner">
+            <div class="panel__inner">
                 <input
                     v-model="localTitle"
                     class="input input--title"
@@ -17,8 +32,8 @@
                     @keyup.enter="saveTitle"
                 />
 
-                <div class="modal__section">
-                    <label class="modal__label">Labels</label>
+                <div class="panel__section">
+                    <label class="panel__label">Labels</label>
                     <div class="label-list">
                         <span
                             v-for="label in localLabels"
@@ -77,40 +92,44 @@
                     </div>
                 </div>
 
-                <div class="modal__section">
-                    <label class="modal__label">Due date</label>
-                    <input
-                        type="date"
-                        v-model="localDueDate"
-                        class="input"
-                        @change="saveDueDate"
-                    />
-                </div>
-
-                <div class="modal__section">
-                    <label class="modal__label">Cover kleur</label>
-                    <div class="label-create__colors">
-                        <span
-                            v-for="color in coverColors"
-                            :key="color"
-                            class="color-dot"
-                            :class="{
-                                'color-dot--active': localCoverColor === color,
-                            }"
-                            :style="{ background: color }"
-                            @click="setCoverColor(color)"
+                <div class="panel__section panel__section--row">
+                    <div class="panel__section-half">
+                        <label class="panel__label">Due date</label>
+                        <input
+                            type="date"
+                            v-model="localDueDate"
+                            class="input"
+                            @change="saveDueDate"
                         />
-                        <span
-                            class="color-dot color-dot--none"
-                            :class="{ 'color-dot--active': !localCoverColor }"
-                            @click="setCoverColor(null)"
-                            >✕</span
-                        >
+                    </div>
+                    <div class="panel__section-half">
+                        <label class="panel__label">Cover kleur</label>
+                        <div class="label-create__colors">
+                            <span
+                                v-for="color in coverColors"
+                                :key="color"
+                                class="color-dot"
+                                :class="{
+                                    'color-dot--active':
+                                        localCoverColor === color,
+                                }"
+                                :style="{ background: color }"
+                                @click="setCoverColor(color)"
+                            />
+                            <span
+                                class="color-dot color-dot--none"
+                                :class="{
+                                    'color-dot--active': !localCoverColor,
+                                }"
+                                @click="setCoverColor(null)"
+                                >✕</span
+                            >
+                        </div>
                     </div>
                 </div>
 
-                <div class="modal__section">
-                    <label class="modal__label">Beschrijving</label>
+                <div class="panel__section">
+                    <label class="panel__label">Beschrijving</label>
                     <textarea
                         v-model="localDescription"
                         class="input input--textarea"
@@ -119,8 +138,17 @@
                     />
                 </div>
 
-                <div class="modal__section">
-                    <label class="modal__label">Checklist</label>
+                <div class="panel__section">
+                    <label class="panel__label">
+                        Checklist
+                        <span
+                            v-if="localItems.length"
+                            class="panel__label-count"
+                            >{{
+                                localItems.filter((i) => i.completed).length
+                            }}/{{ localItems.length }}</span
+                        >
+                    </label>
 
                     <div
                         class="checklist-progress"
@@ -179,9 +207,9 @@
                     </div>
                 </div>
 
-                <div class="modal__footer">
+                <div class="panel__footer">
                     <button
-                        class="btn btn--danger"
+                        class="btn btn--danger btn--sm"
                         @click="$emit('delete', card)"
                     >
                         Kaart verwijderen
@@ -189,7 +217,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </Teleport>
 </template>
 
 <script setup>
