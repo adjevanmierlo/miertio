@@ -328,10 +328,7 @@ function cancelAddCard() {
 }
 
 async function openCard(card) {
-    const data = await api.getBoard(props.board.id);
-    const allCards = data.columns.flatMap((c) => c.cards);
-    const fresh = allCards.find((c) => c.id === card.id);
-    activeCard.value = fresh || card;
+    activeCard.value = card;
 }
 
 function onCardUpdated(updated) {
@@ -339,6 +336,9 @@ function onCardUpdated(updated) {
         const index = column.cards.findIndex((c) => c.id === updated.id);
         if (index !== -1) {
             column.cards[index] = { ...column.cards[index], ...updated };
+            if (activeCard.value && activeCard.value.id === updated.id) {
+                activeCard.value = { ...activeCard.value, ...updated };
+            }
             break;
         }
     }
