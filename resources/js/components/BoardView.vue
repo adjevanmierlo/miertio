@@ -1,5 +1,10 @@
 <template>
-    <div class="board-view">
+    <div
+        class="board-view"
+        :style="
+            board.color ? { backgroundColor: adjustColor(board.color) } : {}
+        "
+    >
         <CardDetail
             v-if="activeCard"
             :card="activeCard"
@@ -8,14 +13,7 @@
             @delete="onCardDelete"
         />
 
-        <div class="board-view__header">
-            <button class="btn btn--ghost" @click="$emit('back')">
-                ← Terug
-            </button>
-            <h2 class="board-view__title">{{ board.title }}</h2>
-        </div>
-
-        <div class="board-view__columns">
+        <div class="board-view__columns-wrap">
             <draggable
                 v-model="columns"
                 item-key="id"
@@ -40,6 +38,9 @@
                                 autofocus
                             />
                             <div class="column__actions">
+                                <span class="column__count">{{
+                                    column.cards.length
+                                }}</span>
                                 <button
                                     class="btn btn--ghost btn--sm"
                                     @click="startColumnEdit(column)"
@@ -55,82 +56,172 @@
                             </div>
                         </div>
 
-                        <draggable
-                            v-model="column.cards"
-                            item-key="id"
-                            group="cards"
-                            @end="onCardReorder"
-                            class="column__cards"
-                        >
-                            <template #item="{ element: card }">
-                                <div class="card-item" @click="openCard(card)">
-                                    {{ card.title }}
+                        <div class="column__body">
+                            <draggable
+                                v-model="column.cards"
+                                item-key="id"
+                                group="cards"
+                                @end="onCardReorder"
+                                class="column__cards"
+                            >
+                                <template #item="{ element: card }">
+                                    <div
+                                        class="card-item"
+                                        @click="openCard(card)"
+                                    >
+                                        <div
+                                            v-if="card.cover_color"
+                                            class="card-item__cover"
+                                            :style="{
+                                                background: card.cover_color,
+                                            }"
+                                        ></div>
+                                        <div class="card-item__body">
+                                            <div
+                                                v-if="
+                                                    card.labels &&
+                                                    card.labels.length
+                                                "
+                                                class="card-item__labels"
+                                            >
+                                                <span
+                                                    v-for="label in card.labels"
+                                                    :key="label.id"
+                                                    class="card-item__label"
+                                                    :style="{
+                                                        background: label.color,
+                                                    }"
+                                                    >{{ label.name }}</span
+                                                >
+                                            </div>
+                                            <div class="card-item__title">
+                                                {{ card.title }}
+                                            </div>
+                                            <div
+                                                v-if="
+                                                    card.due_date ||
+                                                    (card.checklist_items &&
+                                                        card.checklist_items
+                                                            .length)
+                                                "
+                                                class="card-item__meta"
+                                            >
+                                                <span
+                                                    v-if="card.due_date"
+                                                    class="card-item__due"
+                                                    :class="{
+                                                        'card-item__due--overdue':
+                                                            isOverdue(
+                                                                card.due_date,
+                                                            ),
+                                                    }"
+                                                    >📅
+                                                    {{
+                                                        formatDate(
+                                                            card.due_date,
+                                                        )
+                                                    }}</span
+                                                >
+                                                <span
+                                                    v-if="
+                                                        card.checklist_items &&
+                                                        card.checklist_items
+                                                            .length
+                                                    "
+                                                    class="card-item__checklist"
+                                                >
+                                                    ✓
+                                                    {{
+                                                        card.checklist_items.filter(
+                                                            (i) => i.completed,
+                                                        ).length
+                                                    }}/{{
+                                                        card.checklist_items
+                                                            .length
+                                                    }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </draggable>
+                        </div>
+
+                        <div class="column__footer">
+                            <button
+                                class="btn btn--ghost btn--block"
+                                @click="startAddCard(column)"
+                            >
+                                + Kaart toevoegen
+                            </button>
+                            <div
+                                v-if="addingCardColumnId === column.id"
+                                class="column__add-form"
+                            >
+                                <input
+                                    v-model="newCardTitle"
+                                    class="input"
+                                    placeholder="Kaarttitel..."
+                                    autofocus
+                                />
+                                <div class="column__add-actions">
+                                    <button
+                                        class="btn btn--primary btn--sm"
+                                        @click="createCard(column)"
+                                    >
+                                        Toevoegen
+                                    </button>
+                                    <button
+                                        class="btn btn--ghost btn--sm"
+                                        @click="cancelAddCard"
+                                    >
+                                        Annuleren
+                                    </button>
                                 </div>
-                            </template>
-                        </draggable>
-
-                        <button
-                            class="btn btn--ghost btn--block"
-                            @click="startAddCard(column)"
-                        >
-                            + Kaart
-                        </button>
-
-                        <form
-                            v-if="addingCardColumnId === column.id"
-                            @submit.prevent="createCard(column)"
-                        >
-                            <input
-                                v-model="newCardTitle"
-                                class="input"
-                                placeholder="Kaart titel"
-                                autofocus
-                            />
-                            <div class="board-list__form-actions">
-                                <button class="btn btn--primary" type="submit">
-                                    Toevoegen
-                                </button>
-                                <button
-                                    class="btn btn--ghost"
-                                    type="button"
-                                    @click="cancelAddCard"
-                                >
-                                    Annuleren
-                                </button>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </template>
             </draggable>
 
             <div class="column column--add">
-                <form v-if="showColumnForm" @submit.prevent="createColumn">
+                <button
+                    v-if="!showColumnForm"
+                    class="btn btn--ghost"
+                    @click="showColumnForm = true"
+                >
+                    + Column
+                </button>
+                <div
+                    v-else
+                    style="
+                        padding: 12px;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 8px;
+                    "
+                >
                     <input
                         v-model="newColumnTitle"
                         class="input"
                         placeholder="Column naam"
                         autofocus
                     />
-                    <div class="board-list__form-actions">
-                        <button class="btn btn--primary" type="submit">
+                    <div style="display: flex; gap: 6px">
+                        <button
+                            class="btn btn--primary btn--sm"
+                            @click="createColumn"
+                        >
                             Toevoegen
                         </button>
                         <button
-                            class="btn btn--ghost"
-                            type="button"
+                            class="btn btn--ghost btn--sm"
                             @click="showColumnForm = false"
                         >
                             Annuleren
                         </button>
                     </div>
-                </form>
-                <button
-                    v-else
-                    class="btn btn--ghost btn--block"
-                    @click="showColumnForm = true"
-                >
-                    + Column
-                </button>
+                </div>
             </div>
         </div>
     </div>
@@ -158,6 +249,23 @@ onMounted(async () => {
     const data = await api.getBoard(props.board.id);
     columns.value = data.columns;
 });
+
+function adjustColor(hex) {
+    return hex + "18";
+}
+
+function formatDate(date) {
+    if (!date) return "";
+    return new Date(date).toLocaleDateString("nl-NL", {
+        day: "numeric",
+        month: "short",
+    });
+}
+
+function isOverdue(date) {
+    if (!date) return false;
+    return new Date(date) < new Date();
+}
 
 async function createColumn() {
     if (!newColumnTitle.value.trim()) return;
@@ -209,6 +317,7 @@ async function createCard(column) {
         title: newCardTitle.value.trim(),
     });
     card.checklist_items = [];
+    card.labels = [];
     column.cards.push(card);
     cancelAddCard();
 }
@@ -218,8 +327,11 @@ function cancelAddCard() {
     newCardTitle.value = "";
 }
 
-function openCard(card) {
-    activeCard.value = card;
+async function openCard(card) {
+    const data = await api.getBoard(props.board.id);
+    const allCards = data.columns.flatMap((c) => c.cards);
+    const fresh = allCards.find((c) => c.id === card.id);
+    activeCard.value = fresh || card;
 }
 
 function onCardUpdated(updated) {

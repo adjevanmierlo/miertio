@@ -15,19 +15,25 @@ class BoardController extends Controller
 
   public function store(Request $request)
   {
-    $request->validate(['title' => 'required|string|max:255']);
-    return Board::create($request->only('title'));
+    $request->validate([
+      'title' => 'required|string|max:255',
+      'color' => 'nullable|string|size:7',
+    ]);
+    return Board::create($request->only('title', 'color'));
   }
 
   public function show(Board $board)
   {
-    return $board->load(['columns.cards.checklistItems']);
+    return $board->load(['columns.cards.checklistItems', 'columns.cards.labels']);
   }
 
   public function update(Request $request, Board $board)
   {
-    $request->validate(['title' => 'required|string|max:255']);
-    $board->update($request->only('title'));
+    $request->validate([
+      'title' => 'required|string|max:255',
+      'color' => 'nullable|string|size:7',
+    ]);
+    $board->update($request->only('title', 'color'));
     return $board;
   }
 

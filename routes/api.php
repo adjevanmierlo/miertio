@@ -5,6 +5,8 @@ use App\Http\Controllers\Api\BoardController;
 use App\Http\Controllers\Api\ColumnController;
 use App\Http\Controllers\Api\CardController;
 use App\Http\Controllers\Api\ChecklistItemController;
+use App\Http\Controllers\Api\LabelController;
+
 
 // Boards
 Route::apiResource('boards', BoardController::class);
@@ -26,3 +28,13 @@ Route::post('cards/reorder', [CardController::class, 'reorder']);
 Route::post('checklist-items', [ChecklistItemController::class, 'store']);
 Route::put('checklist-items/{checklistItem}', [ChecklistItemController::class, 'update']);
 Route::delete('checklist-items/{checklistItem}', [ChecklistItemController::class, 'destroy']);
+
+// Labels
+Route::get('labels', [LabelController::class, 'index']);
+Route::post('labels', [LabelController::class, 'store']);
+Route::put('labels/{label}', [LabelController::class, 'update']);
+Route::delete('labels/{label}', [LabelController::class, 'destroy']);
+
+// Card labels
+Route::post('cards/{card}/labels/{label}', [CardController::class, 'attachLabel']);
+Route::delete('cards/{card}/labels/{label}', [CardController::class, 'detachLabel']);

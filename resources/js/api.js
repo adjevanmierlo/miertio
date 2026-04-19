@@ -36,9 +36,21 @@ export const api = {
     moveCard: (id, data) => request("POST", `/cards/${id}/move`, data),
     reorderCards: (data) => request("POST", "/cards/reorder", data),
 
+    // Card labels
+    attachLabel: (cardId, labelId) =>
+        request("POST", `/cards/${cardId}/labels/${labelId}`),
+    detachLabel: (cardId, labelId) =>
+        request("DELETE", `/cards/${cardId}/labels/${labelId}`),
+
     // Checklist items
     createChecklistItem: (data) => request("POST", "/checklist-items", data),
     updateChecklistItem: (id, data) =>
         request("PUT", `/checklist-items/${id}`, data),
     deleteChecklistItem: (id) => request("DELETE", `/checklist-items/${id}`),
+
+    // Labels
+    getLabels: (boardId) => request("GET", `/labels?board_id=${boardId}`),
+    createLabel: (data) => request("POST", "/labels", data),
+    updateLabel: (id, data) => request("PUT", `/labels/${id}`, data),
+    deleteLabel: (id) => request("DELETE", `/labels/${id}`),
 };

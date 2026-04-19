@@ -6,10 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Board extends Model
 {
-  protected $fillable = ['title'];
+  protected $fillable = ['title', 'color'];
 
   public function columns()
   {
     return $this->hasMany(Column::class)->orderBy('position');
+  }
+
+  public function labels()
+  {
+    return $this->hasMany(Label::class);
   }
 }

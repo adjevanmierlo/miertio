@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Card;
+use App\Models\Label;
 use Illuminate\Http\Request;
 
 class CardController extends Controller
@@ -31,10 +32,12 @@ class CardController extends Controller
     $request->validate([
       'title'       => 'sometimes|string|max:255',
       'description' => 'nullable|string',
+      'due_date'    => 'nullable|date',
+      'cover_color' => 'nullable|string|size:7',
     ]);
 
-    $card->update($request->only('title', 'description'));
-    return $card->load('checklistItems');
+    $card->update($request->only('title', 'description', 'due_date', 'cover_color'));
+    return $card->load('checklistItems', 'labels');
   }
 
   public function destroy(Card $card)
@@ -69,6 +72,18 @@ class CardController extends Controller
       Card::where('id', $id)->update(['position' => $position]);
     }
 
+    return response()->noContent();
+  }
+
+  public function attachLabel(Card $card, Label $label)
+  {
+    $card->labels()->syncWithoutDetaching([$label->id]);
+    return response()->noContent();
+  }
+
+  public function detachLabel(Card $card, Label $label)
+  {
+    $card->labels()->detach($label->id);
     return response()->noContent();
   }
 }

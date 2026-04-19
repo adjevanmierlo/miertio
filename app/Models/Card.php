@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Card extends Model
 {
-  protected $fillable = ['column_id', 'board_id', 'title', 'description', 'position'];
+  protected $fillable = ['column_id', 'board_id', 'title', 'description', 'position', 'cover_color', 'due_date'];
 
   public function column()
   {
@@ -21,5 +21,10 @@ class Card extends Model
   public function checklistItems()
   {
     return $this->hasMany(ChecklistItem::class)->orderBy('position');
+  }
+
+  public function labels()
+  {
+    return $this->belongsToMany(Label::class);
   }
 }
