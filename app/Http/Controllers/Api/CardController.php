@@ -34,9 +34,10 @@ class CardController extends Controller
       'description' => 'nullable|string',
       'due_date'    => 'nullable|date',
       'cover_color' => 'nullable|string|size:7',
+      'priority'    => 'sometimes|in:low,normal,high,urgent',
     ]);
 
-    $card->update($request->only('title', 'description', 'due_date', 'cover_color'));
+    $card->update($request->only('title', 'description', 'due_date', 'cover_color', 'priority'));
     return $card->load('checklistItems', 'labels');
   }
 

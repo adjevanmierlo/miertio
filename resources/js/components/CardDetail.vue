@@ -128,6 +128,34 @@
                     </div>
                 </div>
 
+                <!-- Prioriteit sectie -->
+                <div class="panel__section">
+                    <label class="panel__label">Prioriteit</label>
+                    <div class="priority-picker">
+                        <button
+                            v-for="p in priorities"
+                            :key="p.value"
+                            class="priority-btn"
+                            :class="{
+                                'priority-btn--active':
+                                    localPriority === p.value,
+                            }"
+                            :style="
+                                localPriority === p.value
+                                    ? {
+                                          background: p.color,
+                                          color: '#fff',
+                                          borderColor: p.color,
+                                      }
+                                    : { borderColor: p.color, color: p.color }
+                            "
+                            @click="setPriority(p.value)"
+                        >
+                            {{ p.label }}
+                        </button>
+                    </div>
+                </div>
+
                 <div class="panel__section">
                     <label class="panel__label">Beschrijving</label>
                     <textarea
@@ -238,6 +266,17 @@ const newItemTitle = ref("");
 const newLabelName = ref("");
 const newLabelColor = ref("#6c8ebf");
 
+// Prioriteiten configuratie
+const priorities = [
+    { value: "low", label: "Laag", color: "#10b981" },
+    { value: "normal", label: "Normaal", color: "#6b9fff" },
+    { value: "high", label: "Hoog", color: "#f59e0b" },
+    { value: "urgent", label: "Urgent", color: "#ef4444" },
+];
+
+// Lokale prioriteit state
+const localPriority = ref(props.card.priority || "normal");
+
 const labelColors = [
     "#6c8ebf",
     "#7db87d",
@@ -332,6 +371,13 @@ async function setCoverColor(color) {
     localCoverColor.value = color;
     const updated = await api.updateCard(props.card.id, { cover_color: color });
     emit("updated", { ...props.card, cover_color: color, ...updated });
+}
+
+// Prioriteit functie
+async function setPriority(value) {
+    localPriority.value = value;
+    const updated = await api.updateCard(props.card.id, { priority: value });
+    emit("updated", { ...props.card, priority: value, ...updated });
 }
 
 async function addItem() {

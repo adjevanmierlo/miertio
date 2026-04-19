@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Card extends Model
 {
-  protected $fillable = ['column_id', 'board_id', 'title', 'description', 'position', 'cover_color', 'due_date'];
+  protected $fillable = ['column_id', 'board_id', 'title', 'description', 'position', 'cover_color', 'due_date', 'priority'];
 
   public function column()
   {

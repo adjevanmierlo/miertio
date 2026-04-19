@@ -6,23 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::table('cards', function (Blueprint $table) {
-            //
-        });
-    }
+  /**
+   * Run the migrations.
+   */
+  public function up(): void
+  {
+    Schema::table('cards', function (Blueprint $table) {
+      $table->string('priority')->default('normal')->after('position');
+    });
+  }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::table('cards', function (Blueprint $table) {
-            //
-        });
-    }
+  /**
+   * Reverse the migrations.
+   */
+  public function down(): void
+  {
+    Schema::table('cards', function (Blueprint $table) {
+      $table->dropColumn('priority');
+    });
+  }
 };

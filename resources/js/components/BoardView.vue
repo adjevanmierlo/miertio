@@ -69,6 +69,15 @@
                                         class="card-item"
                                         @click="openCard(card)"
                                     >
+                                        <!-- Prioriteit streep toegevoegd als eerste element -->
+                                        <div
+                                            class="card-item__priority"
+                                            :style="{
+                                                background: getPriorityColor(
+                                                    card.priority,
+                                                ),
+                                            }"
+                                        ></div>
                                         <div
                                             v-if="card.cover_color"
                                             class="card-item__cover"
@@ -148,37 +157,58 @@
                         </div>
 
                         <div class="column__footer">
-                            <button
-                                class="btn btn--ghost btn--block"
-                                @click="startAddCard(column)"
-                            >
-                                + Kaart toevoegen
-                            </button>
                             <div
                                 v-if="addingCardColumnId === column.id"
                                 class="column__add-form"
                             >
-                                <input
+                                <textarea
                                     v-model="newCardTitle"
-                                    class="input"
+                                    class="input input--textarea input--card-add"
                                     placeholder="Kaarttitel..."
+                                    rows="2"
                                     autofocus
+                                    @keyup.enter.prevent="
+                                        createCardAndContinue(column)
+                                    "
+                                    @keyup.escape="cancelAddCard"
+                                    ref="addCardInput"
                                 />
                                 <div class="column__add-actions">
                                     <button
                                         class="btn btn--primary btn--sm"
                                         @click="createCard(column)"
                                     >
-                                        Toevoegen
+                                        Kaart toevoegen
                                     </button>
                                     <button
                                         class="btn btn--ghost btn--sm"
                                         @click="cancelAddCard"
                                     >
-                                        Annuleren
+                                        ✕
                                     </button>
                                 </div>
                             </div>
+                            <button
+                                v-else
+                                class="btn btn--ghost btn--block column__add-btn"
+                                @click="startAddCard(column)"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="13"
+                                    height="13"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2.5"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <line x1="12" y1="5" x2="12" y2="19" />
+                                    <line x1="5" y1="12" x2="19" y2="12" />
+                                </svg>
+                                Kaart toevoegen
+                            </button>
                         </div>
                     </div>
                 </template>
@@ -245,6 +275,17 @@ const addingCardColumnId = ref(null);
 const newCardTitle = ref("");
 const activeCard = ref(null);
 
+// Prioriteit kleur functie
+function getPriorityColor(priority) {
+    const colors = {
+        low: "#10b981",
+        normal: "#6b9fff",
+        high: "#f59e0b",
+        urgent: "#ef4444",
+    };
+    return colors[priority] || colors.normal;
+}
+
 onMounted(async () => {
     const data = await api.getBoard(props.board.id);
     columns.value = data.columns;
@@ -310,6 +351,23 @@ function startAddCard(column) {
 }
 
 async function createCard(column) {
+    if (!newCardTitle.value.trim()) {
+        cancelAddCard();
+        return;
+    }
+    const card = await api.createCard({
+        column_id: column.id,
+        board_id: props.board.id,
+        title: newCardTitle.value.trim(),
+    });
+    card.checklist_items = [];
+    card.labels = [];
+    card.priority = "normal";
+    column.cards.push(card);
+    cancelAddCard();
+}
+
+async function createCardAndContinue(column) {
     if (!newCardTitle.value.trim()) return;
     const card = await api.createCard({
         column_id: column.id,
@@ -318,8 +376,9 @@ async function createCard(column) {
     });
     card.checklist_items = [];
     card.labels = [];
+    card.priority = "normal";
     column.cards.push(card);
-    cancelAddCard();
+    newCardTitle.value = "";
 }
 
 function cancelAddCard() {

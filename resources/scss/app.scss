@@ -281,6 +281,27 @@ textarea.input {
     font-family: inherit;
 }
 
+.input--card-add {
+    min-height: 60px;
+    resize: none;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.column__add-btn {
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    gap: 6px;
+    justify-content: flex-start;
+    padding: 6px 8px;
+
+    &:hover {
+        color: var(--accent);
+        background: var(--accent-soft);
+    }
+}
+
 // ─── Home ─────────────────────────────────────────────────────────────────────
 
 .home {
@@ -1197,6 +1218,34 @@ textarea.input {
         box-shadow:
             3px 3px 8px var(--shadow-dark),
             -2px -2px 5px var(--shadow-light);
+    }
+}
+
+// ─── Priority ─────────────────────────────────────────────────────────────────
+
+.priority-picker {
+    display: flex;
+    gap: 8px;
+}
+
+.priority-btn {
+    flex: 1;
+    padding: 6px 8px;
+    border-radius: var(--radius-sm);
+    border: 2px solid;
+    background: transparent;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all var(--transition);
+    text-align: center;
+
+    &:hover {
+        opacity: 0.85;
+        transform: translateY(-1px);
+    }
+    &--active {
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
     }
 }
 
