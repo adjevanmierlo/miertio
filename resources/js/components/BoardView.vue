@@ -48,16 +48,109 @@
                                         column.cards.length
                                     }}</span>
                                     <button
-                                        class="btn btn--ghost btn--sm"
-                                        @click="startColumnEdit(column)"
+                                        class="column__icon-btn"
+                                        @click="sortByPriority(column)"
+                                        title="Sorteren op prioriteit"
                                     >
-                                        ✏️
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="12"
+                                            height="12"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2.5"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        >
+                                            <line
+                                                x1="8"
+                                                y1="6"
+                                                x2="21"
+                                                y2="6"
+                                            />
+                                            <line
+                                                x1="8"
+                                                y1="12"
+                                                x2="21"
+                                                y2="12"
+                                            />
+                                            <line
+                                                x1="8"
+                                                y1="18"
+                                                x2="21"
+                                                y2="18"
+                                            />
+                                            <line
+                                                x1="3"
+                                                y1="6"
+                                                x2="3.01"
+                                                y2="6"
+                                            />
+                                            <line
+                                                x1="3"
+                                                y1="12"
+                                                x2="3.01"
+                                                y2="12"
+                                            />
+                                            <line
+                                                x1="3"
+                                                y1="18"
+                                                x2="3.01"
+                                                y2="18"
+                                            />
+                                        </svg>
                                     </button>
                                     <button
-                                        class="btn btn--ghost btn--sm"
-                                        @click="deleteColumn(column)"
+                                        class="column__icon-btn"
+                                        @click="startColumnEdit(column)"
+                                        title="Bewerken"
                                     >
-                                        🗑️
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="12"
+                                            height="12"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        >
+                                            <path
+                                                d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
+                                            />
+                                            <path
+                                                d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"
+                                            />
+                                        </svg>
+                                    </button>
+                                    <button
+                                        class="column__icon-btn column__icon-btn--danger"
+                                        @click="deleteColumn(column)"
+                                        title="Verwijderen"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="12"
+                                            height="12"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        >
+                                            <polyline points="3 6 5 6 21 6" />
+                                            <path
+                                                d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"
+                                            />
+                                            <path d="M10 11v6" />
+                                            <path d="M14 11v6" />
+                                            <path
+                                                d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"
+                                            />
+                                        </svg>
                                     </button>
                                 </div>
                             </div>
@@ -132,13 +225,51 @@
                                                                     card.due_date,
                                                                 ),
                                                         }"
-                                                        >📅
+                                                    >
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            width="10"
+                                                            height="10"
+                                                            viewBox="0 0 24 24"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            stroke-width="2"
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                        >
+                                                            <rect
+                                                                x="3"
+                                                                y="4"
+                                                                width="18"
+                                                                height="18"
+                                                                rx="2"
+                                                                ry="2"
+                                                            />
+                                                            <line
+                                                                x1="16"
+                                                                y1="2"
+                                                                x2="16"
+                                                                y2="6"
+                                                            />
+                                                            <line
+                                                                x1="8"
+                                                                y1="2"
+                                                                x2="8"
+                                                                y2="6"
+                                                            />
+                                                            <line
+                                                                x1="3"
+                                                                y1="10"
+                                                                x2="21"
+                                                                y2="10"
+                                                            />
+                                                        </svg>
                                                         {{
                                                             formatDate(
                                                                 card.due_date,
                                                             )
-                                                        }}</span
-                                                    >
+                                                        }}
+                                                    </span>
                                                     <span
                                                         v-if="
                                                             card.checklist_items &&
@@ -147,7 +278,24 @@
                                                         "
                                                         class="card-item__checklist"
                                                     >
-                                                        ✓
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            width="10"
+                                                            height="10"
+                                                            viewBox="0 0 24 24"
+                                                            fill="none"
+                                                            stroke="currentColor"
+                                                            stroke-width="2.5"
+                                                            stroke-linecap="round"
+                                                            stroke-linejoin="round"
+                                                        >
+                                                            <polyline
+                                                                points="9 11 12 14 22 4"
+                                                            />
+                                                            <path
+                                                                d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"
+                                                            />
+                                                        </svg>
                                                         {{
                                                             card.checklist_items.filter(
                                                                 (i) =>
@@ -172,7 +320,7 @@
                                 >
                                     <textarea
                                         v-model="newCardTitle"
-                                        class="input input--textarea input--card-add"
+                                        class="input input--card-add"
                                         placeholder="Kaarttitel..."
                                         rows="2"
                                         autofocus
@@ -186,7 +334,7 @@
                                             class="btn btn--primary btn--sm"
                                             @click="createCard(column)"
                                         >
-                                            Kaart toevoegen
+                                            Toevoegen
                                         </button>
                                         <button
                                             class="btn btn--ghost btn--sm"
@@ -198,13 +346,13 @@
                                 </div>
                                 <button
                                     v-else
-                                    class="btn btn--ghost btn--block column__add-btn"
+                                    class="column__add-btn"
                                     @click="startAddCard(column)"
                                 >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
-                                        width="13"
-                                        height="13"
+                                        width="12"
+                                        height="12"
                                         viewBox="0 0 24 24"
                                         fill="none"
                                         stroke="currentColor"
@@ -225,27 +373,35 @@
                 <div class="column column--add">
                     <button
                         v-if="!showColumnForm"
-                        class="btn btn--ghost"
+                        class="column__add-btn"
                         @click="showColumnForm = true"
                     >
-                        + Column
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="12"
+                            height="12"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg>
+                        Column toevoegen
                     </button>
-                    <div
-                        v-else
-                        style="
-                            width: 100%;
-                            display: flex;
-                            flex-direction: column;
-                            gap: 8px;
-                        "
-                    >
+                    <div v-else class="column__add-form">
                         <input
                             v-model="newColumnTitle"
-                            class="input"
+                            class="input input--sm"
                             placeholder="Column naam"
                             autofocus
+                            @keyup.enter="createColumn"
+                            @keyup.escape="showColumnForm = false"
                         />
-                        <div style="display: flex; gap: 6px">
+                        <div class="column__add-actions">
                             <button
                                 class="btn btn--primary btn--sm"
                                 @click="createColumn"
@@ -256,7 +412,7 @@
                                 class="btn btn--ghost btn--sm"
                                 @click="showColumnForm = false"
                             >
-                                Annuleren
+                                ✕
                             </button>
                         </div>
                     </div>
@@ -284,7 +440,8 @@ const addingCardColumnId = ref(null);
 const newCardTitle = ref("");
 const activeCard = ref(null);
 
-// Prioriteit kleur functie
+const priorityOrder = { urgent: 0, high: 1, normal: 2, low: 3 };
+
 function getPriorityColor(priority) {
     const colors = {
         low: "#10b981",
@@ -293,6 +450,14 @@ function getPriorityColor(priority) {
         urgent: "#ef4444",
     };
     return colors[priority] || colors.normal;
+}
+
+function sortByPriority(column) {
+    column.cards = [...column.cards].sort((a, b) => {
+        return (
+            (priorityOrder[a.priority] ?? 2) - (priorityOrder[b.priority] ?? 2)
+        );
+    });
 }
 
 onMounted(async () => {
@@ -360,6 +525,23 @@ function startAddCard(column) {
 }
 
 async function createCard(column) {
+    if (!newCardTitle.value.trim()) {
+        cancelAddCard();
+        return;
+    }
+    const card = await api.createCard({
+        column_id: column.id,
+        board_id: props.board.id,
+        title: newCardTitle.value.trim(),
+    });
+    card.checklist_items = [];
+    card.labels = [];
+    card.priority = "normal";
+    column.cards.push(card);
+    cancelAddCard();
+}
+
+async function createCardAndContinue(column) {
     if (!newCardTitle.value.trim()) return;
     const card = await api.createCard({
         column_id: column.id,
@@ -368,8 +550,9 @@ async function createCard(column) {
     });
     card.checklist_items = [];
     card.labels = [];
+    card.priority = "normal";
     column.cards.push(card);
-    cancelAddCard();
+    newCardTitle.value = "";
 }
 
 function cancelAddCard() {
@@ -404,17 +587,13 @@ async function onCardDelete(card) {
 }
 
 async function onColumnReorder() {
-    await api.reorderColumns({
-        columns: columns.value.map((c) => c.id),
-    });
+    await api.reorderColumns({ columns: columns.value.map((c) => c.id) });
 }
 
 async function onCardReorder(event) {
     const allColumns = columns.value;
     for (const column of allColumns) {
-        await api.reorderCards({
-            cards: column.cards.map((c) => c.id),
-        });
+        await api.reorderCards({ cards: column.cards.map((c) => c.id) });
     }
 
     if (event.from !== event.to) {
