@@ -607,6 +607,11 @@ textarea.input {
             background: rgba(239, 68, 68, 0.1);
             color: var(--danger);
         }
+
+        &--active {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
     }
 
     &__body {

@@ -49,6 +49,10 @@
                                     }}</span>
                                     <button
                                         class="column__icon-btn"
+                                        :class="{
+                                            'column__icon-btn--active':
+                                                sortedColumns.has(column.id),
+                                        }"
                                         @click="sortByPriority(column)"
                                         title="Sorteren op prioriteit"
                                     >
@@ -439,6 +443,8 @@ const editColumnTitle = ref("");
 const addingCardColumnId = ref(null);
 const newCardTitle = ref("");
 const activeCard = ref(null);
+const sortedColumns = ref(new Set());
+const originalOrder = ref({});
 
 const priorityOrder = { urgent: 0, high: 1, normal: 2, low: 3 };
 
@@ -453,11 +459,21 @@ function getPriorityColor(priority) {
 }
 
 function sortByPriority(column) {
-    column.cards = [...column.cards].sort((a, b) => {
-        return (
-            (priorityOrder[a.priority] ?? 2) - (priorityOrder[b.priority] ?? 2)
-        );
-    });
+    if (sortedColumns.value.has(column.id)) {
+        // Terug naar origineel
+        column.cards = [...originalOrder.value[column.id]];
+        sortedColumns.value.delete(column.id);
+    } else {
+        // Sla originele volgorde op en sorteer
+        originalOrder.value[column.id] = [...column.cards];
+        column.cards = [...column.cards].sort((a, b) => {
+            return (
+                (priorityOrder[a.priority] ?? 2) -
+                (priorityOrder[b.priority] ?? 2)
+            );
+        });
+        sortedColumns.value.add(column.id);
+    }
 }
 
 onMounted(async () => {
