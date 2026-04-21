@@ -17,7 +17,14 @@
                     }}</span>
                 </template>
                 <template v-else>
-                    <span class="app-header__logo">Kanban</span>
+                    <span class="app-header__logo">
+                        <img
+                            :src="faviconUrl"
+                            alt=""
+                            class="app-header__favicon"
+                        />
+                        Miertio
+                    </span>
                 </template>
             </div>
             <div class="app-header__right">
@@ -85,20 +92,21 @@ import BoardView from "./components/BoardView.vue";
 
 const activeBoard = ref(null);
 const isDark = ref(false);
+const faviconUrl = window.location.origin + "/images/favicon.ico";
 
 function openBoard(board) {
     activeBoard.value = board;
-    document.title = `${board.title} — Kanban`;
+    document.title = `${board.title} — Miertio`;
 }
 
 function closeBoard() {
     activeBoard.value = null;
-    document.title = "Kanban";
+    document.title = "Miertio";
 }
 
 function onBoardUpdated(board) {
     activeBoard.value = board;
-    document.title = `${board.title} — Kanban`;
+    document.title = `${board.title} — Miertio`;
 }
 
 function toggleTheme() {
